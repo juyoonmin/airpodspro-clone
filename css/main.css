@@ -80,6 +80,25 @@ a{
     font-size: 1.2rem;
     margin-bottom: 0.5em;
 }
+
+.sticky-elem{
+    display: none;
+    position: fixed;
+    /* position: sticky로 대체 가능*/
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+#show-scene-0 #scroll-section-0 .sticky-elem,
+#show-scene-1 #scroll-section-1 .sticky-elem,
+#show-scene-2 #scroll-section-2 .sticky-elem,
+#show-scene-3 #scroll-section-3 .sticky-elem{
+    display: block;
+}
+
+
+
+
 #scroll-section-2 .main-message{
     font-size: 3.5rem;
 }
