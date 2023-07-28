@@ -73,6 +73,7 @@ a{
     text-align: center;
 }
 .main-message{
+    overflow: hidden;
     display: flex;
     justify-content: center;
     align-items: center;
