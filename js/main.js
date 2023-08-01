@@ -99,12 +99,23 @@
             heightNum: 5, // 브라우저 높이의 5배로 scrollHeight 세팅
             scrollHeight: 0,
             objs: {
-                container: document.querySelector('#scroll-section-3')
+                container: document.querySelector('#scroll-section-3'),
+                canvasCaption: document.querySelector('.canvas-caption'),
+                canvas: document.querySelector('.image-blend-canvas'), 
+                context: document.querySelector('.image-blend-canvas').getContext('2d'),
+                imagePath: [
+                    './images/blend-image-1.jpg',
+                    './images/blend-image-2.jpg'
+                ],
+                images: []
+            },
+            values: {
+
             }
         }
     ];
 
-    function setcanvasImages() {
+    function setcanvasImages() { // 이미지 객체 생성
         let imgElem;
         for (let i = 0; i <sceneInfo[0].values.videoImageCount; i++){
             imgElem = new Image(); // 이미지 객체 생성 document.createElement('img')
@@ -118,10 +129,18 @@
             imgElem2.src = `./video/002/IMG_${7027 + i}.JPG`; 
             sceneInfo[2].objs.videoImages.push(imgElem2); 
         }
+
+        let imgElem3;
+        for (let i = 0; i <sceneInfo[3].objs.imagePath.length; i++){
+            imgElem3 = new Image();
+            imgElem3.src = sceneInfo[3].objs.imagePath[i];
+            sceneInfo[3].objs.images.push(imgElem3); 
+        }
+        console.log(sceneInfo[3].objs.images);
     }
     setcanvasImages();
 
-    function setLayout() {
+    function setLayout() { 
         // 각 스크롤 섹션의 높이 세팅
         	for (let i = 0; i < sceneInfo.length; i++) {
 			if (sceneInfo[i].type === 'sticky') {
@@ -152,7 +171,7 @@
 
     }
 
-    function calcValues(values, currentYoffset) {
+    function calcValues(values, currentYoffset) { // 현재 씬에서 스크롤된 범위를 비율로 구하기
         let rv;
         // 현재 씬에서 스크롤된 범위를 비율로 구하기
         const scrollHeight = sceneInfo[currentScene].scrollHeight;
@@ -186,7 +205,7 @@
     }
 
 
-    function playAnimation() {
+    function playAnimation() { //현재 씬에서 어떤 애니메이션을 실행할지 결정하는 함수
         const objs = sceneInfo[currentScene].objs;
         const values = sceneInfo[currentScene].values;
         const currentYoffset = yOffset - prevScrollHeight; //현재 씬을 기준으로 스크롤 위치를 계산
@@ -290,12 +309,27 @@
                 break;
             case 3:
                 // console.log('3 play');
+                // 가로/세로 모두 꽉 차게 하기 위해 여기서 세팅(계산 필요)
+                const widthRatio = window.innerWidth / objs.canvas.width; //캔버스의 가로비율
+                const heightRatio = window.innerHeight / objs.canvas.height; //캔버스의 세로비율
+                let canvasScaleRatio;
+
+                if (widthRatio <= heightRatio) {
+                    // 캔버스보다 브라우저 창이 홀쭉한 경우
+                    canvasScaleRatio = heightRatio;
+                } else {
+                    // 캔버스보다 브라우저 창이 납작한 경우
+                    canvasScaleRatio = widthRatio;
+                }
+
+                objs.canvas.style.transform = `scale(${canvasScaleRatio})`; //캔버스의 크기를 브라우저 창에 맞게 조정
+                objs.context.drawImage(objs.images[0], 0, 0);
                 break;
         }
 
     }
 
-    function scrollLoop() {
+    function scrollLoop() { //스크롤 이벤트가 발생할 때마다 실행되는 함수
         enterNewScene = false;
         prevScrollHeight = 0;
         //모든 이전 씬의 총 스크롤 높이를 계산하는 루프
@@ -315,24 +349,19 @@
             if (currentScene === 0) return; // 브라우저 바운스 효과로 인해 마이너스가 되는 것을 방지
             currentScene--;
             document.body.setAttribute('id', `show-scene-${currentScene}`);
-
         }
         // enterNewScene이 true일 때 playAnimation 함수를 실행
         if (enterNewScene) return;
         playAnimation();
     }
 
-
-
-
-
-    window.addEventListener('scroll', () => {
+    window.addEventListener('scroll', () => { 
         //  IE에서는 scrollY 대신 pageYOffset 사용
         yOffset = window.scrollY;
         scrollLoop();
     });
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded', () => { 
         setLayout();
         sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
 
@@ -342,3 +371,4 @@
     setLayout();
 
 })();
+
