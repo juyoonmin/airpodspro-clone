@@ -17,6 +17,9 @@
                 messageB: document.querySelector('#scroll-section-0 .main-message.main-b'),
                 messageC: document.querySelector('#scroll-section-0 .main-message.main-c'),
                 messageD: document.querySelector('#scroll-section-0 .main-message.main-d'),
+                canvas: document.querySelector('#video-canvas-0'),
+                context: document.querySelector('#video-canvas-0').getContext('2d'), // canvas를 사용하기 위해 context를 가져옴
+                videoImages: [] // 이미지 객체들을 담을 배열
             },
             values: {
                 messageA_opacity_in: [0, 1, { start: 0.1, end: 0.2 }],
@@ -34,8 +37,9 @@
                 messageA_translateY_out: [0, -30, { start: 0.25, end: 0.3 }],
                 messageB_translateY_out: [0, -30, { start: 0.45, end: 0.5 }],
                 messageC_translateY_out: [0, -30, { start: 0.65, end: 0.7 }],
-                messageD_translateY_out: [0, -30, { start: 0.85, end: 0.9 }]
-
+                messageD_translateY_out: [0, -30, { start: 0.85, end: 0.9 }],
+                videoImageCount: 300, // 이미지 개수
+                imageSequence: [0, 299], // 이미지 순서
             }
         },
         {
@@ -91,6 +95,16 @@
             }
         }
     ];
+
+    function setcanvasImages() {
+        let imgElem;
+        for (let i = 0; i <sceneInfo[0].values.videoImageCount; i++){
+            imgElem = new Image(); // 이미지 객체 생성 document.createElement('img')
+            imgElem.src = `./video/001/IMG_${6726 + i}.JPG`; // 이미지 경로 지정
+            sceneInfo[0].objs.videoImages.push(imgElem); // 이미지 객체를 배열에 저장
+        }
+    }
+    setcanvasImages();
 
     function setLayout() {
         // 각 스크롤 섹션의 높이 세팅
