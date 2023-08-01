@@ -63,7 +63,10 @@
                 messageB: document.querySelector('#scroll-section-2 .main-b'),
                 messageC: document.querySelector('#scroll-section-2 .main-c'),
                 pinB: document.querySelector('#scroll-section-2 .main-b .pin'),
-                pinC: document.querySelector('#scroll-section-2 .main-c .pin')
+                pinC: document.querySelector('#scroll-section-2 .main-c .pin'),
+                canvas: document.querySelector('#video-canvas-1'),
+                context: document.querySelector('#video-canvas-1').getContext('2d'), 
+                videoImages: [] 
             },
             values: {
                 messageA_translateY_in: [30, 0, { start: 0.15, end: 0.2 }],
@@ -83,7 +86,11 @@
                 pinB_opacity_in: [0, 1, { start: 0.5, end: 0.55 }],
                 pinC_opacity_in: [0, 1, { start: 0.72, end: 0.77 }],
                 pinB_opacity_out: [1, 0, { start: 0.58, end: 0.63 }],
-                pinC_opacity_out: [1, 0, { start: 0.85, end: 0.9 }]
+                pinC_opacity_out: [1, 0, { start: 0.85, end: 0.9 }],
+                videoImageCount: 960, // 이미지 개수
+                imageSequence: [0, 959], // 이미지 순서
+                canvas_opacity_in: [0, 1, { start: 0, end: 0.1 }],
+                canvas_opacity_out: [1, 0, { start: 0.95, end: 1 }]
             }
         },
         {
@@ -103,6 +110,13 @@
             imgElem = new Image(); // 이미지 객체 생성 document.createElement('img')
             imgElem.src = `./video/001/IMG_${6726 + i}.JPG`; // 이미지 경로 지정
             sceneInfo[0].objs.videoImages.push(imgElem); // 이미지 객체를 배열에 저장
+        }
+
+        let imgElem2;
+        for (let i = 0; i <sceneInfo[2].values.videoImageCount; i++){
+            imgElem2 = new Image(); 
+            imgElem2.src = `./video/002/IMG_${7027 + i}.JPG`; 
+            sceneInfo[2].objs.videoImages.push(imgElem2); 
         }
     }
     setcanvasImages();
@@ -133,6 +147,8 @@
 
         const heightRatio = window.innerHeight / 1080; // 브라우저 높이에 따른 비율로 캔버스 높이 조절
         sceneInfo[0].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`; // 캔버스 크기 조절
+        sceneInfo[2].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`; 
+
 
     }
 
@@ -228,6 +244,17 @@
                 break;
             case 2:
                 // console.log('2 play');
+                let sequence2 = Math.round(calcValues(values.imageSequence, currentYoffset)); 
+                objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
+
+                if (scrollRatio <= 0.5){
+                    // in
+                    objs.canvas.style.opacity = calcValues(values.canvas_opacity_in, currentYoffset);
+                } else{
+                    // out
+                    objs.canvas.style.opacity = calcValues(values.canvas_opacity_out, currentYoffset);
+                }
+
                 if (scrollRatio <= 0.32) {
                     // in
                     objs.messageA.style.opacity = calcValues(values.messageA_opacity_in, currentYoffset);
