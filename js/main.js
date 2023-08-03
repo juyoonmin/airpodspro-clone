@@ -104,7 +104,7 @@
                 canvas: document.querySelector('.image-blend-canvas'),
                 context: document.querySelector('.image-blend-canvas').getContext('2d'),
                 imagePath: [
-                    './images/blend-image-1.jpg',
+                    './images/blend-image-1.png',
                     './images/blend-image-2.jpg'
                 ],
                 images: []
@@ -112,7 +112,8 @@
             values: {
                 rect1X: [0, 0, { start: 0, end: 0 }],
                 rect2X: [0, 0, { start: 0, end: 0 }],
-                rectStartY: 0 // 캔버스 사각형 기준점
+                rectStartY: 0, // 캔버스 사각형 기준점
+                blendHeight: [0, 0, { start: 0, end: 0 }],
             }
         }
     ];
@@ -412,6 +413,18 @@
                 } else { // 스크롤이 직사각형(캔버스)의 시작점에 도달하면 직사각형이 스크롤에 따라서 움직임
                     step = 2;
                     // 이미지 블렌드
+                    values.blendHeight[0] = 0; 
+                    values.blendHeight[1] = objs.canvas.height; 
+                    values.blendHeight[2].start = values.rect1X[2].end; //끝나는 시점을 직사각형(캔버스)의 시작점으로 설정
+                    values.blendHeight[2].end = values.blendHeight[2].start + 0.2; //시작점에서 0.2 뒤에 끝나도록 설정
+                    
+                    const blendHeight = calcValues(values.blendHeight, currentYoffset); //블렌드할 이미지의 높이를 계산
+
+                    objs.context.drawImage(objs.images[1],
+                        0, objs.canvas.height - blendHeight, objs.canvas.width, blendHeight, //소스 이미지의 위치와 크기
+                        0, objs.canvas.height - blendHeight, objs.canvas.width, blendHeight  //캔버스의 그릴 위치와 크기
+                    );
+
                     objs.canvas.classList.add('sticky-canvas'); //캔버스를 fixed로 고정
                     objs.canvas.style.top = `${-(objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2}px`; //캔버스의 위치를 조정
                 }
