@@ -114,6 +114,7 @@
                 rect2X: [0, 0, { start: 0, end: 0 }],
                 rectStartY: 0, // 캔버스 사각형 기준점
                 blendHeight: [0, 0, { start: 0, end: 0 }],
+                canvas_scale: [0, 0, { start: 0, end: 0 }],
             }
         }
     ];
@@ -427,6 +428,16 @@
 
                     objs.canvas.classList.add('sticky-canvas'); //캔버스를 fixed로 고정
                     objs.canvas.style.top = `${-(objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2}px`; //캔버스의 위치를 조정
+
+                    // 이미지 블렌드 축소처리
+                    if (scrollRatio > values.blendHeight[2].end){//블렌드가 끝나면
+                        values.canvas_scale[0] = canvasScaleRatio //캔버스의 스케일을 원래대로 돌려놓음
+                        values.canvas_scale[1] = document.body.offsetWidth / (1.5 * objs.canvas.width); // 캔버스의 스케일을 축소시킴
+                        values.canvas_scale[2].start = values.blendHeight[2].end; //끝나는 시점을 블렌드가 끝나는 시점으로 설정
+                        values.canvas_scale[2].end = values.canvas_scale[2].start + 0.2; //시작점에서 0.2 뒤에 끝나도록 설정
+
+                        objs.canvas.style.transform = `scale(${calcValues(values.canvas_scale, currentYoffset)})`; //캔버스의 스케일을 계산
+                    }
                 }
 
 
