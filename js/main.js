@@ -115,6 +115,8 @@
                 rectStartY: 0, // 캔버스 사각형 기준점
                 blendHeight: [0, 0, { start: 0, end: 0 }],
                 canvas_scale: [0, 0, { start: 0, end: 0 }],
+                canvasCaption_opacity: [0, 1, { start: 0, end: 0 }],
+                canvasCaption_translateY: [20, 0, { start: 0, end: 0 }],
             }
         }
     ];
@@ -142,6 +144,15 @@
         }
     }
     setcanvasImages();
+
+    function checkMenu() {
+        if (yOffset > 44) {
+            document.body.classList.add('local-nav-sticky');
+        } else {
+            document.body.classList.remove('local-nav-sticky');
+        }
+    }
+
 
     function setLayout() {
         // 각 스크롤 섹션의 높이 세팅
@@ -443,6 +454,13 @@
                     if (scrollRatio > values.canvas_scale[2].end && values.canvas_scale[2].end > 0){ //축소처리가 끝나면
                         objs.canvas.classList.remove('sticky-canvas'); //캔버스를 fixed에서 해제
                         objs.canvas.style.marginTop = `${scrollHeight * 0.4}px`; //마진을 줘서 캔버스가 화면에 보이도록 함
+
+                        values.canvasCaption_opacity[2].start = values.canvas_scale[2].end;
+						values.canvasCaption_opacity[2].end = values.canvasCaption_opacity[2].start + 0.1;
+						values.canvasCaption_translateY[2].start = values.canvasCaption_opacity[2].start;
+						values.canvasCaption_translateY[2].end = values.canvasCaption_opacity[2].end;
+						objs.canvasCaption.style.opacity = calcValues(values.canvasCaption_opacity, currentYoffset);
+						objs.canvasCaption.style.transform = `translate3d(0, ${calcValues(values.canvasCaption_translateY, currentYoffset)}%, 0)`; 
                     }
                 }
 
@@ -482,9 +500,10 @@
         //  IE에서는 scrollY 대신 pageYOffset 사용
         yOffset = window.scrollY;
         scrollLoop();
+        checkMenu();
     });
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('load', () => {
         setLayout();
         sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
 
