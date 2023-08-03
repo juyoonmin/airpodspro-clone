@@ -56,7 +56,7 @@
             // 2
             type: 'sticky',
             heightNum: 5, // 브라우저 높이의 5배로 scrollHeight 세팅
-            scrollHeight: 0, 
+            scrollHeight: 0,
             objs: {
                 container: document.querySelector('#scroll-section-2'),
                 messageA: document.querySelector('#scroll-section-2 .main-a'),
@@ -65,8 +65,8 @@
                 pinB: document.querySelector('#scroll-section-2 .main-b .pin'),
                 pinC: document.querySelector('#scroll-section-2 .main-c .pin'),
                 canvas: document.querySelector('#video-canvas-1'),
-                context: document.querySelector('#video-canvas-1').getContext('2d'), 
-                videoImages: [] 
+                context: document.querySelector('#video-canvas-1').getContext('2d'),
+                videoImages: []
             },
             values: {
                 messageA_translateY_in: [30, 0, { start: 0.15, end: 0.2 }],
@@ -101,7 +101,7 @@
             objs: {
                 container: document.querySelector('#scroll-section-3'),
                 canvasCaption: document.querySelector('.canvas-caption'),
-                canvas: document.querySelector('.image-blend-canvas'), 
+                canvas: document.querySelector('.image-blend-canvas'),
                 context: document.querySelector('.image-blend-canvas').getContext('2d'),
                 imagePath: [
                     './images/blend-image-1.jpg',
@@ -110,63 +110,65 @@
                 images: []
             },
             values: {
-
+                rect1X: [0, 0, { start: 0, end: 0 }],
+                rect2X: [0, 0, { start: 0, end: 0 }],
+                rectStartY: 0, // 캔버스 사각형 기준점
             }
         }
     ];
 
     function setcanvasImages() { // 이미지 객체 생성
         let imgElem;
-        for (let i = 0; i <sceneInfo[0].values.videoImageCount; i++){
+        for (let i = 0; i < sceneInfo[0].values.videoImageCount; i++) {
             imgElem = new Image(); // 이미지 객체 생성 document.createElement('img')
             imgElem.src = `./video/001/IMG_${6726 + i}.JPG`; // 이미지 경로 지정
             sceneInfo[0].objs.videoImages.push(imgElem); // 이미지 객체를 배열에 저장
         }
 
         let imgElem2;
-        for (let i = 0; i <sceneInfo[2].values.videoImageCount; i++){
-            imgElem2 = new Image(); 
-            imgElem2.src = `./video/002/IMG_${7027 + i}.JPG`; 
-            sceneInfo[2].objs.videoImages.push(imgElem2); 
+        for (let i = 0; i < sceneInfo[2].values.videoImageCount; i++) {
+            imgElem2 = new Image();
+            imgElem2.src = `./video/002/IMG_${7027 + i}.JPG`;
+            sceneInfo[2].objs.videoImages.push(imgElem2);
         }
 
         let imgElem3;
-        for (let i = 0; i <sceneInfo[3].objs.imagePath.length; i++){
+        for (let i = 0; i < sceneInfo[3].objs.imagePath.length; i++) {
             imgElem3 = new Image();
             imgElem3.src = sceneInfo[3].objs.imagePath[i];
-            sceneInfo[3].objs.images.push(imgElem3); 
+            sceneInfo[3].objs.images.push(imgElem3);
         }
-        console.log(sceneInfo[3].objs.images);
     }
     setcanvasImages();
 
-    function setLayout() { 
+    function setLayout() {
         // 각 스크롤 섹션의 높이 세팅
-        	for (let i = 0; i < sceneInfo.length; i++) {
-			if (sceneInfo[i].type === 'sticky') {
-				sceneInfo[i].scrollHeight = sceneInfo[i].heightNum * window.innerHeight;
-			} else if (sceneInfo[i].type === 'normal')  {
-				sceneInfo[i].scrollHeight = sceneInfo[i].objs.container.offsetHeight;
-			}
-            sceneInfo[i].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`;
-		}
+        for (let i = 0; i < sceneInfo.length; i++) {
+            if (sceneInfo[i].type === 'sticky') {
+                sceneInfo[i].scrollHeight = sceneInfo[i].heightNum * window.innerHeight;
+                sceneInfo[i].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`;
+            } else if (sceneInfo[i].type === 'normal') {
+                sceneInfo[i].scrollHeight = sceneInfo[i].objs.container.offsetHeight;
+            }
+
+        }
         // 현재 활성화된 씬 세팅
 
         yOffset = window.scrollY;
-        
+
         let totalScrollHeight = 0;
-		for (let i = 0; i < sceneInfo.length; i++) {
-			totalScrollHeight += sceneInfo[i].scrollHeight;
-			if (totalScrollHeight >= yOffset) {
-				currentScene = i;
-				break;
-			}
-		}
-		document.body.setAttribute('id', `show-scene-${currentScene}`);
+        for (let i = 0; i < sceneInfo.length; i++) {
+            totalScrollHeight += sceneInfo[i].scrollHeight;
+            if (totalScrollHeight >= yOffset) {
+                currentScene = i;
+                break;
+            }
+        }
+        document.body.setAttribute('id', `show-scene-${currentScene}`);
 
         const heightRatio = window.innerHeight / 1080; // 브라우저 높이에 따른 비율로 캔버스 높이 조절
         sceneInfo[0].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`; // 캔버스 크기 조절
-        sceneInfo[2].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`; 
+        sceneInfo[2].objs.canvas.style.transform = `translate3d(-50%, -50%, 0) scale(${heightRatio})`;
 
 
     }
@@ -263,13 +265,13 @@
                 break;
             case 2:
                 // console.log('2 play');
-                let sequence2 = Math.round(calcValues(values.imageSequence, currentYoffset)); 
+                let sequence2 = Math.round(calcValues(values.imageSequence, currentYoffset));
                 objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
 
-                if (scrollRatio <= 0.5){
+                if (scrollRatio <= 0.5) {
                     // in
                     objs.canvas.style.opacity = calcValues(values.canvas_opacity_in, currentYoffset);
-                } else{
+                } else {
                     // out
                     objs.canvas.style.opacity = calcValues(values.canvas_opacity_out, currentYoffset);
                 }
@@ -324,6 +326,35 @@
 
                 objs.canvas.style.transform = `scale(${canvasScaleRatio})`; //캔버스의 크기를 브라우저 창에 맞게 조정
                 objs.context.drawImage(objs.images[0], 0, 0);
+
+                // 캔버스 사이즈에 맞춰 가정한 innerWidth와 innerHeight
+                const recalculatedInnerWidth = document.body.offsetWidth / canvasScaleRatio; //캔버스의 가로비율에 맞춰서 innerWidth를 조정
+                const recalculatedInnerHeight = document.body.offsetWidth / canvasScaleRatio; //캔버스의 세로비율에 맞춰서 innerHeight를 조정
+
+                if (!values.rectStartY) { //캔버스의 시작점을 고정시키기 위해 
+                    values.rectStartY = objs.canvas.getBoundingClientRect().top; //캔버스의 top 위치를 계산
+                    values.rect1X[2].end = values.rectStartY / scrollHeight; //첫번째 직사각형의 시작점을 계산
+                    values.rect2X[2].end = values.rectStartY / scrollHeight; //두번째 직사각형의 시작점을 계산
+                }
+
+                const whiteRectWidth = recalculatedInnerWidth * 0.15; // innerWidth를 기준으로 흰색 직사각형의 너비를 계산
+                values.rect1X[0] = (objs.canvas.width - recalculatedInnerWidth) / 2; // innerWidth를 기반으로 직사각형의 초기 x 위치를 계산
+                values.rect1X[1] = values.rect1X[0] - whiteRectWidth; // innerWidth를 기반으로 직사각형의 최종 x 위치를 계산
+                values.rect2X[0] = values.rect1X[0] + recalculatedInnerWidth - whiteRectWidth; // innerWidth를 기반으로 두번째 직사각형의 초기 x 위치를 계산
+                values.rect2X[1] = values.rect2X[0] + whiteRectWidth; // innerWidth를 기반으로 두번째 직사각형의 최종 x 위치를 계산
+
+                // 좌우 흰색 박스 그리기
+                objs.context.fillRect(
+                    parseInt(calcValues(values.rect1X, currentYoffset)), //첫번째 직사각형의 x 위치를 계산
+                    0, //첫번째 직사각형의 y 위치를 계산
+                    parseInt(whiteRectWidth), //첫번째 직사각형의 너비를 계산
+                    objs.canvas.height); //첫번째 직사각형의 높이를 계산
+                objs.context.fillRect(parseInt(calcValues(values.rect2X, currentYoffset)),
+                    0,
+                    parseInt(whiteRectWidth),
+                    objs.canvas.height); 
+
+                    
                 break;
         }
 
@@ -355,13 +386,13 @@
         playAnimation();
     }
 
-    window.addEventListener('scroll', () => { 
+    window.addEventListener('scroll', () => {
         //  IE에서는 scrollY 대신 pageYOffset 사용
         yOffset = window.scrollY;
         scrollLoop();
     });
 
-    window.addEventListener('DOMContentLoaded', () => { 
+    window.addEventListener('DOMContentLoaded', () => {
         setLayout();
         sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
 
