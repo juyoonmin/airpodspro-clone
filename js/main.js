@@ -437,6 +437,12 @@
                         values.canvas_scale[2].end = values.canvas_scale[2].start + 0.2; //시작점에서 0.2 뒤에 끝나도록 설정
 
                         objs.canvas.style.transform = `scale(${calcValues(values.canvas_scale, currentYoffset)})`; //캔버스의 스케일을 계산
+                        objs.canvas.style.marginTop = 0;
+                    }
+
+                    if (scrollRatio > values.canvas_scale[2].end && values.canvas_scale[2].end > 0){ //축소처리가 끝나면
+                        objs.canvas.classList.remove('sticky-canvas'); //캔버스를 fixed에서 해제
+                        objs.canvas.style.marginTop = `${scrollHeight * 0.4}px`; //마진을 줘서 캔버스가 화면에 보이도록 함
                     }
                 }
 

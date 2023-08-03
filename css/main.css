@@ -115,7 +115,8 @@ a{
     left: 50%;
 }
 .image-blend-canvas.sticky-canvas{
-    /* top: 0; */
+    top: 0;
+    z-index: 10;
     position: fixed;
 }
 #show-scene-0 #scroll-section-0 .sticky-elem,
