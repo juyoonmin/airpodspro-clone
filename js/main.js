@@ -147,7 +147,7 @@
             sceneInfo[3].objs.images.push(imgElem3);
         }
     }
-    setcanvasImages();
+    
 
     function checkMenu() {
         if (yOffset > 44) {
@@ -506,7 +506,9 @@
         //사용자의 스크롤 위치를 기반으로 현재 활성화된 씬을 결정하는데 사용
         if (delayedYOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
             enterNewScene = true;
-            currentScene++;
+            if (currentScene < sceneInfo.length - 1) { //현재 씬이 마지막 씬이 아니면
+				currentScene++;
+			}
             document.body.setAttribute('id', `show-scene-${currentScene}`);
 
         }
@@ -539,9 +541,15 @@
         sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
 
     });
-    window.addEventListener('resize', setLayout);
+    window.addEventListener('resize', () =>{
+        if(window.innerWidth > 600){ //모바일 화면이 아닐 때만 실행
+            setLayout(); 
+        }
+        sceneInfo[3].values.rectStartY = 0; //리사이즈 될 때마다 rectStartY를 0으로 초기화
+    });
+    window.addEventListener('orientationchange', setLayout); //모바일 기기의 방향이 바뀔 때 실행
 
-    setLayout();
+    setcanvasImages();
 
 })();
 
