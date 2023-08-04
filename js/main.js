@@ -4,6 +4,10 @@
     let prevScrollHeight = 0; // 현재 스크롤 위치(yOffset)보다 이전에 위치한 스크롤 섹션들의 스크롤 높이값의 합
     let currentScene = 0; // 현재 활성화된(눈 앞에 보고있는) 씬(scroll-section)
     let enterNewScene = false; // 새로운 scene이 시작된 순간 true
+    let acc = 0.1; // 비디오 가속도
+    let delayedYOffset = 0; // 딜레이된 yOffset
+    let rafId; // requestAnimationFrame의 id
+    let rafState; // requestAnimationFrame의 상태
 
     const sceneInfo = [
         {
@@ -232,8 +236,8 @@
         switch (currentScene) {
             case 0:
                 // console.log('0 play');
-                let sequence = Math.round(calcValues(values.imageSequence, currentYoffset)); // 현재 씬에서 스크롤된 범위를 비율로 구하기
-                objs.context.drawImage(objs.videoImages[sequence], 0, 0); // 이미지를 그림
+                // let sequence = Math.round(calcValues(values.imageSequence, currentYoffset)); // 현재 씬에서 스크롤된 범위를 비율로 구하기
+                // objs.context.drawImage(objs.videoImages[sequence], 0, 0); // 이미지를 그림
                 objs.canvas.style.opacity = calcValues(values.canvas_opacity_in, currentYoffset);//현재 스크롤 위치를 기준으로 객체의 opacity를 계산
 
                 if (scrollRatio <= 0.22) {
@@ -278,8 +282,8 @@
                 break;
             case 2:
                 // console.log('2 play');
-                let sequence2 = Math.round(calcValues(values.imageSequence, currentYoffset));
-                objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
+                // let sequence2 = Math.round(calcValues(values.imageSequence, currentYoffset));
+                // objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
 
                 if (scrollRatio <= 0.5) {
                     // in
@@ -470,6 +474,28 @@
 
     }
 
+    function loop(){ //비디오를 끊김없이 재생하기 위한 함수
+        delayedYOffset = delayedYOffset + (yOffset - delayedYOffset) * acc; //yOffset을 감속도를 적용한 값으로 설정
+        if(!enterNewScene){
+            if(currentScene === 0 || currentScene === 2){ //0번째 씬과 2번째 씬에서만 실행
+                const currentYoffset = delayedYOffset - prevScrollHeight;
+                const objs = sceneInfo[currentScene].objs;
+                const values = sceneInfo[currentScene].values;
+                let sequence = Math.round(calcValues(values.imageSequence, currentYoffset));  
+                if(objs.videoImages[sequence]){ //비디오 이미지가 있으면
+                    objs.context.drawImage(objs.videoImages[sequence], 0, 0);
+                }
+            }
+        }
+        rafId = requestAnimationFrame(loop); //requestAnimationFrame을 이용해 loop 함수를 반복 실행
+
+        if(Math.abs(yOffset - delayedYOffset) < 1){ //yOffset과 delayedYOffset의 차이가 1보다 작으면
+            cancelAnimationFrame(rafId);
+            rafState = false;
+        }
+    }
+
+
     function scrollLoop() { //스크롤 이벤트가 발생할 때마다 실행되는 함수
         enterNewScene = false;
         prevScrollHeight = 0;
@@ -478,14 +504,14 @@
             prevScrollHeight += sceneInfo[i].scrollHeight;
         }
         //사용자의 스크롤 위치를 기반으로 현재 활성화된 씬을 결정하는데 사용
-        if (yOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
+        if (delayedYOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
             enterNewScene = true;
             currentScene++;
             document.body.setAttribute('id', `show-scene-${currentScene}`);
 
         }
         //사용자가 이전 씬으로 스크롤되었는지 여부를 판단하기 위해 사용
-        if (yOffset < prevScrollHeight) {
+        if (delayedYOffset < prevScrollHeight) {
             enterNewScene = true;
             if (currentScene === 0) return; // 브라우저 바운스 효과로 인해 마이너스가 되는 것을 방지
             currentScene--;
@@ -501,6 +527,11 @@
         yOffset = window.scrollY;
         scrollLoop();
         checkMenu();
+
+        if (!rafState) { 
+            raf = requestAnimationFrame(loop); //requestAnimationFrame은 브라우저에게 수행하기를 원하는 애니메이션을 알리고 다음 리페인트가 진행되기 전에 해당 애니메이션을 업데이트하는 함수
+            rafState = true;
+        }
     });
 
     window.addEventListener('load', () => {
