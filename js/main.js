@@ -537,6 +537,7 @@
     });
 
     window.addEventListener('load', () => {
+        document.body.classList.remove('before-load'); //로딩이 끝나면 before-load 클래스를 제거
         setLayout();
         sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
 
@@ -548,6 +549,9 @@
         sceneInfo[3].values.rectStartY = 0; //리사이즈 될 때마다 rectStartY를 0으로 초기화
     });
     window.addEventListener('orientationchange', setLayout); //모바일 기기의 방향이 바뀔 때 실행
+    document.querySelector('.loading').addEventListener('transitionend', (e) => {
+        document.body.removeChild(e.currentTarget); //로딩이 끝나면 loading 클래스를 제거
+    });
 
     setcanvasImages();
 

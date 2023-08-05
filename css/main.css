@@ -202,6 +202,54 @@ a{
     color: white;
     background-color: darkorange;
 }
+.loading{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    background-color: white;
+    transition: 0.5s;
+    opacity: 0;
+}
+.before-load .loading{
+    opacity: 1;
+}
+@keyframes loading-spin{
+    100%{
+        transform: rotate(360deg);
+    }
+}
+@keyframes loading-ani{
+    0%{
+        stroke-dashoffset: 157;
+    }
+    75%{
+        stroke-dashoffset: -147;
+    }
+    100%{
+        stroke-dashoffset: -157;
+    }
+}
+.loading-circle{
+    width: 54px;
+    height: 54px;
+    animation: loading-spin 3s infinite;
+}
+
+.loading-circle circle{
+    stroke: black;
+    stroke-width: 4;
+     /* getTotalLength()로 구한 값 */
+    stroke-dasharray: 157;
+    stroke-dashoffset: 0;
+    fill:transparent;
+    animation: loading-ani 1s infinite;
+}
 
 @media (min-width:1024px){
     #scroll-section-0 h1{
