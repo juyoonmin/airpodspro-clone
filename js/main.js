@@ -542,14 +542,17 @@
         });
 
         window.addEventListener('resize', () =>{
-            if(window.innerWidth > 600){ //모바일 화면이 아닐 때만 실행
+            if(window.innerWidth > 900){ //모바일 화면이 아닐 때만 실행
                 setLayout(); 
+                sceneInfo[3].values.rectStartY = 0; //리사이즈 될 때마다 rectStartY를 0으로 초기화
             }
-            sceneInfo[3].values.rectStartY = 0; //리사이즈 될 때마다 rectStartY를 0으로 초기화
+            
         });
 
-        window.addEventListener('orientationchange', setLayout); //모바일 기기의 방향이 바뀔 때 실행
-        
+        window.addEventListener('orientationchange', () => {
+            setTimeout(setLayout, 500); //모바일 기기의 방향이 바뀔 때마다 실행
+        }); 
+
         document.querySelector('.loading').addEventListener('transitionend', (e) => {
             document.body.removeChild(e.currentTarget); //로딩이 끝나면 loading 클래스를 제거
         });
