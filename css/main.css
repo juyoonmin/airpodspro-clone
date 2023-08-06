@@ -1,5 +1,4 @@
 @charset 'utf-8';
-@import  "reset.css";
 
 html{
     font-family: 'Noto Sans KR', sans-serif;
@@ -86,12 +85,12 @@ body.before-load{
 
 .scroll-section{
     position: relative;
-    padding-top: 30vh;
+    padding-top: 50vh;
 }
 #scroll-section-0 h1{
     position: relative;
     z-index: 5;
-    top: 10vh;
+    top: -10vh;
     font-size: 4rem;
     text-align: center;
 }
@@ -228,6 +227,10 @@ body.before-load{
     background-color: white;
     transition: 0.5s;
     opacity: 0;
+}
+.before-load .container{
+    /* 로딩이 끝나면 보이게 */
+    display: none; 
 }
 .before-load .loading{
     opacity: 1;
