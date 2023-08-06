@@ -19,6 +19,11 @@ a{
     text-decoration: none;
 }
 
+body.before-load{
+    /* 로딩화면에서 스크롤막기 */
+    overflow: hidden; 
+}
+
 /* 네비게이션 */
 
 .global-nav {

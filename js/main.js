@@ -524,34 +524,39 @@
         playAnimation();
     }
 
-    window.addEventListener('scroll', () => {
-        //  IE에서는 scrollY 대신 pageYOffset 사용
-        yOffset = window.scrollY;
-        scrollLoop();
-        checkMenu();
-
-        if (!rafState) { 
-            raf = requestAnimationFrame(loop); //requestAnimationFrame은 브라우저에게 수행하기를 원하는 애니메이션을 알리고 다음 리페인트가 진행되기 전에 해당 애니메이션을 업데이트하는 함수
-            rafState = true;
-        }
-    });
-
     window.addEventListener('load', () => {
         document.body.classList.remove('before-load'); //로딩이 끝나면 before-load 클래스를 제거
         setLayout();
         sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
 
+        window.addEventListener('scroll', () => {
+            //  IE에서는 scrollY 대신 pageYOffset 사용
+            yOffset = window.scrollY;
+            scrollLoop();
+            checkMenu();
+    
+            if (!rafState) { 
+                raf = requestAnimationFrame(loop); //requestAnimationFrame은 브라우저에게 수행하기를 원하는 애니메이션을 알리고 다음 리페인트가 진행되기 전에 해당 애니메이션을 업데이트하는 함수
+                rafState = true;
+            }
+        });
+
+        window.addEventListener('resize', () =>{
+            if(window.innerWidth > 600){ //모바일 화면이 아닐 때만 실행
+                setLayout(); 
+            }
+            sceneInfo[3].values.rectStartY = 0; //리사이즈 될 때마다 rectStartY를 0으로 초기화
+        });
+
+        window.addEventListener('orientationchange', setLayout); //모바일 기기의 방향이 바뀔 때 실행
+        
+        document.querySelector('.loading').addEventListener('transitionend', (e) => {
+            document.body.removeChild(e.currentTarget); //로딩이 끝나면 loading 클래스를 제거
+        });
+
     });
-    window.addEventListener('resize', () =>{
-        if(window.innerWidth > 600){ //모바일 화면이 아닐 때만 실행
-            setLayout(); 
-        }
-        sceneInfo[3].values.rectStartY = 0; //리사이즈 될 때마다 rectStartY를 0으로 초기화
-    });
-    window.addEventListener('orientationchange', setLayout); //모바일 기기의 방향이 바뀔 때 실행
-    document.querySelector('.loading').addEventListener('transitionend', (e) => {
-        document.body.removeChild(e.currentTarget); //로딩이 끝나면 loading 클래스를 제거
-    });
+   
+    
 
     setcanvasImages();
 
