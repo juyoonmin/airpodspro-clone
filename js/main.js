@@ -529,6 +529,21 @@
         setLayout();
         sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
 
+        // 중간에서 새로고침 했을 경우 자동 스크롤로 제대로 그려주기
+        let tempYOffset = yOffset;
+        let tempScrollCount = 0;
+        if (tempYOffset > 0) { 
+            let siId = setInterval(() => { 
+                scrollTo(0, tempYOffset); //0.02초마다 5px씩 스크롤
+                tempYOffset += 5; 
+
+                if (tempScrollCount > 20) { 
+                    clearInterval(siId); //20번 스크롤하면 setInterval을 멈춤
+                }
+                tempScrollCount++; //스크롤 횟수를 증가
+            }, 20);
+        }
+
         window.addEventListener('scroll', () => {
             //  IE에서는 scrollY 대신 pageYOffset 사용
             yOffset = window.scrollY;
