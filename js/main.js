@@ -111,7 +111,8 @@
                     './images/blend-image-1.png',
                     './images/blend-image-2.jpg'
                 ],
-                images: []
+                images: [],
+            localNav: document.querySelector('.local-nav-links')
             },
             values: {
                 rect1X: [0, 0, { start: 0, end: 0 }],
@@ -369,6 +370,7 @@
                         objs.canvas.height
                     );
                 }
+                
 
                 break;
             case 3:
@@ -396,7 +398,8 @@
                 const recalculatedInnerHeight = window.innerHeight / canvasScaleRatio; //캔버스의 세로비율에 맞춰서 innerHeight를 조정
 
                 if (!values.rectStartY) { //캔버스의 시작점을 고정시키기 위해 
-                    values.rectStartY = objs.canvas.getBoundingClientRect().top;
+                    // values.rectStartY = objs.canvas.getBoundingClientRect().top;
+                    values.rectStartY = objs.canvas.offsetTop + (objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2; //시작점을 고정시키기 위해 캔버스의 상단 위치를 계산
 
                     values.rect1X[2].start = (window.innerHeight / 2) / scrollHeight; //캔버스의 높이 및 스케일링 비율에 따라서 직사각형의 시작 y 위치를 계산
                     values.rect2X[2].start = (window.innerHeight / 2) / scrollHeight;
@@ -426,6 +429,7 @@
                 if (scrollRatio < values.rect1X[2].end) { // 스크롤이 직사각형(캔버스)의 시작점에 도달하기 전까지는 직사각형이 고정되어 있음
                     step = 1;
                     objs.canvas.classList.remove('sticky-canvas');
+                    objs.localNav.classList.remove('sticky-nav');
                 } else { // 스크롤이 직사각형(캔버스)의 시작점에 도달하면 직사각형이 스크롤에 따라서 움직임
                     step = 2;
                     // 이미지 블렌드
@@ -442,10 +446,12 @@
                     );
 
                     objs.canvas.classList.add('sticky-canvas'); //캔버스를 fixed로 고정
+                    objs.localNav.classList.add('sticky-nav'); 
                     objs.canvas.style.top = `${-(objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2}px`; //캔버스의 위치를 조정
 
                     // 이미지 블렌드 축소처리
                     if (scrollRatio > values.blendHeight[2].end){//블렌드가 끝나면
+                        objs.localNav.classList.remove('sticky-nav');
                         values.canvas_scale[0] = canvasScaleRatio //캔버스의 스케일을 원래대로 돌려놓음
                         values.canvas_scale[1] = document.body.offsetWidth / (1.5 * objs.canvas.width); // 캔버스의 스케일을 축소시킴
                         values.canvas_scale[2].start = values.blendHeight[2].end; //끝나는 시점을 블렌드가 끝나는 시점으로 설정
@@ -558,13 +564,13 @@
 
         window.addEventListener('resize', () =>{
             if(window.innerWidth > 900){ //모바일 화면이 아닐 때만 실행
-                setLayout(); 
-                sceneInfo[3].values.rectStartY = 0; //리사이즈 될 때마다 rectStartY를 0으로 초기화
+                window.location.reload(); //브라우저의 크기가 변할 때마다 새로고침
             }
             
         });
 
         window.addEventListener('orientationchange', () => {
+            scrollTo(0, 0); //모바일 기기의 방향이 바뀔 때마다 스크롤 위치를 0으로 설정
             setTimeout(setLayout, 500); //모바일 기기의 방향이 바뀔 때마다 실행
         }); 
 
