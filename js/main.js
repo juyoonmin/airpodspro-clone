@@ -54,6 +54,14 @@
             scrollHeight: 0,
             objs: {
                 container: document.querySelector('#scroll-section-1'),
+                ribbonPath: document.querySelector('.ribbon-path path'),
+                messageA: document.querySelector('#scroll-section-1 .main-message.main-a'),
+            },
+            values: {
+                path_dashoffset_in: [1401, 0, { start: 0.2, end: 0.4 }],
+                path_dashoffset_out: [0, -1401, { start: 0.6, end: 0.8 }],
+                messageA_opacity_in: [0, 1, { start: 0.4, end: 0.5 }],
+                messageA_opacity_out: [1, 0, { start: 0.6, end: 0.7 }],
             }
         },
         {
@@ -112,7 +120,7 @@
                     './images/blend-image-2.jpg'
                 ],
                 images: [],
-            localNav: document.querySelector('.local-nav-links')
+                localNav: document.querySelector('.local-nav-links'),
             },
             values: {
                 rect1X: [0, 0, { start: 0, end: 0 }],
@@ -121,7 +129,7 @@
                 blendHeight: [0, 0, { start: 0, end: 0 }],
                 canvas_scale: [0, 0, { start: 0, end: 0 }],
                 canvasCaption_opacity: [0, 1, { start: 0, end: 0 }],
-                canvasCaption_translateY: [20, 0, { start: 0, end: 0 }],
+                canvasCaption_translateY: [20, 0, { start: 0, end: 0 }]
             }
         }
     ];
@@ -148,7 +156,7 @@
             sceneInfo[3].objs.images.push(imgElem3);
         }
     }
-    
+
 
     function checkMenu() {
         if (yOffset > 44) {
@@ -197,9 +205,9 @@
         const scrollHeight = sceneInfo[currentScene].scrollHeight;
         const scrollRatio = currentYoffset / scrollHeight;
 
-        if (values.length === 3) {
+        if (values.length === 3) { 
             // start ~ end 사이에 애니메이션 실행
-            const partScrollStart = values[2].start * scrollHeight;
+            const partScrollStart = values[2].start * scrollHeight; 
             const partScrollEnd = values[2].end * scrollHeight;
             const partScrollHeight = partScrollEnd - partScrollStart;
 
@@ -280,6 +288,23 @@
                     objs.messageD.style.transform = `translate3d(0, ${calcValues(values.messageD_translateY_out, currentYoffset)}%, 0)`;
                 }
 
+                break;
+            case 1:
+
+                if (scrollRatio <= 0.55) {
+					// in
+					objs.messageA.style.opacity = calcValues(values.messageA_opacity_in, currentYoffset);
+				} else {
+					// out
+					objs.messageA.style.opacity = calcValues(values.messageA_opacity_out, currentYoffset);
+				}
+
+                if (scrollRatio <= 0.5) { 
+					objs.ribbonPath.style.strokeDashoffset = calcValues(values.path_dashoffset_in, currentYoffset);
+				} else {
+					objs.ribbonPath.style.strokeDashoffset = calcValues(values.path_dashoffset_out, currentYoffset);
+				}
+            
                 break;
             case 2:
                 // console.log('2 play');
@@ -370,7 +395,7 @@
                         objs.canvas.height
                     );
                 }
-                
+
 
                 break;
             case 3:
@@ -433,11 +458,11 @@
                 } else { // 스크롤이 직사각형(캔버스)의 시작점에 도달하면 직사각형이 스크롤에 따라서 움직임
                     step = 2;
                     // 이미지 블렌드
-                    values.blendHeight[0] = 0; 
-                    values.blendHeight[1] = objs.canvas.height; 
+                    values.blendHeight[0] = 0;
+                    values.blendHeight[1] = objs.canvas.height;
                     values.blendHeight[2].start = values.rect1X[2].end; //끝나는 시점을 직사각형(캔버스)의 시작점으로 설정
                     values.blendHeight[2].end = values.blendHeight[2].start + 0.2; //시작점에서 0.2 뒤에 끝나도록 설정
-                    
+
                     const blendHeight = calcValues(values.blendHeight, currentYoffset); //블렌드할 이미지의 높이를 계산
 
                     objs.context.drawImage(objs.images[1],
@@ -446,11 +471,11 @@
                     );
 
                     objs.canvas.classList.add('sticky-canvas'); //캔버스를 fixed로 고정
-                    objs.localNav.classList.add('sticky-nav'); 
+                    objs.localNav.classList.add('sticky-nav');
                     objs.canvas.style.top = `${-(objs.canvas.height - objs.canvas.height * canvasScaleRatio) / 2}px`; //캔버스의 위치를 조정
 
                     // 이미지 블렌드 축소처리
-                    if (scrollRatio > values.blendHeight[2].end){//블렌드가 끝나면
+                    if (scrollRatio > values.blendHeight[2].end) {//블렌드가 끝나면
                         objs.localNav.classList.remove('sticky-nav');
                         values.canvas_scale[0] = canvasScaleRatio //캔버스의 스케일을 원래대로 돌려놓음
                         values.canvas_scale[1] = document.body.offsetWidth / (1.5 * objs.canvas.width); // 캔버스의 스케일을 축소시킴
@@ -461,41 +486,43 @@
                         objs.canvas.style.marginTop = 0;
                     }
 
-                    if (scrollRatio > values.canvas_scale[2].end && values.canvas_scale[2].end > 0){ //축소처리가 끝나면
+                    if (scrollRatio > values.canvas_scale[2].end && values.canvas_scale[2].end > 0) { //축소처리가 끝나면
                         objs.canvas.classList.remove('sticky-canvas'); //캔버스를 fixed에서 해제
                         objs.canvas.style.marginTop = `${scrollHeight * 0.4}px`; //마진을 줘서 캔버스가 화면에 보이도록 함
 
                         values.canvasCaption_opacity[2].start = values.canvas_scale[2].end;
-						values.canvasCaption_opacity[2].end = values.canvasCaption_opacity[2].start + 0.1;
-						values.canvasCaption_translateY[2].start = values.canvasCaption_opacity[2].start;
-						values.canvasCaption_translateY[2].end = values.canvasCaption_opacity[2].end;
-						objs.canvasCaption.style.opacity = calcValues(values.canvasCaption_opacity, currentYoffset);
-						objs.canvasCaption.style.transform = `translate3d(0, ${calcValues(values.canvasCaption_translateY, currentYoffset)}%, 0)`; 
+                        values.canvasCaption_opacity[2].end = values.canvasCaption_opacity[2].start + 0.1;
+                        values.canvasCaption_translateY[2].start = values.canvasCaption_opacity[2].start;
+                        values.canvasCaption_translateY[2].end = values.canvasCaption_opacity[2].end;
+                        objs.canvasCaption.style.opacity = calcValues(values.canvasCaption_opacity, currentYoffset);
+                        objs.canvasCaption.style.transform = `translate3d(0, ${calcValues(values.canvasCaption_translateY, currentYoffset)}%, 0)`;
+                        objs.ribbonPath.style.strokeDashoffset = calcValues(values.path_dashoffset_in, currentYoffset);
+                    } else {
+                        objs.ribbonPath.style.strokeDashoffset = calcValues(values.path_dashoffset_out, currentYoffset);
                     }
                 }
-
 
                 break;
         }
 
     }
 
-    function loop(){ //비디오를 끊김없이 재생하기 위한 함수
+    function loop() { //비디오를 끊김없이 재생하기 위한 함수
         delayedYOffset = delayedYOffset + (yOffset - delayedYOffset) * acc; //yOffset을 감속도를 적용한 값으로 설정
-        if(!enterNewScene){
-            if(currentScene === 0 || currentScene === 2){ //0번째 씬과 2번째 씬에서만 실행
+        if (!enterNewScene) {
+            if (currentScene === 0 || currentScene === 2) { //0번째 씬과 2번째 씬에서만 실행
                 const currentYoffset = delayedYOffset - prevScrollHeight;
                 const objs = sceneInfo[currentScene].objs;
                 const values = sceneInfo[currentScene].values;
-                let sequence = Math.round(calcValues(values.imageSequence, currentYoffset));  
-                if(objs.videoImages[sequence]){ //비디오 이미지가 있으면
+                let sequence = Math.round(calcValues(values.imageSequence, currentYoffset));
+                if (objs.videoImages[sequence]) { //비디오 이미지가 있으면
                     objs.context.drawImage(objs.videoImages[sequence], 0, 0);
                 }
             }
         }
         rafId = requestAnimationFrame(loop); //requestAnimationFrame을 이용해 loop 함수를 반복 실행
 
-        if(Math.abs(yOffset - delayedYOffset) < 1){ //yOffset과 delayedYOffset의 차이가 1보다 작으면
+        if (Math.abs(yOffset - delayedYOffset) < 1) { //yOffset과 delayedYOffset의 차이가 1보다 작으면
             cancelAnimationFrame(rafId);
             rafState = false;
         }
@@ -513,8 +540,8 @@
         if (delayedYOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
             enterNewScene = true;
             if (currentScene < sceneInfo.length - 1) { //현재 씬이 마지막 씬이 아니면
-				currentScene++;
-			}
+                currentScene++;
+            }
             document.body.setAttribute('id', `show-scene-${currentScene}`);
 
         }
@@ -538,12 +565,12 @@
         // 중간에서 새로고침 했을 경우 자동 스크롤로 제대로 그려주기
         let tempYOffset = yOffset;
         let tempScrollCount = 0;
-        if (tempYOffset > 0) { 
-            let siId = setInterval(() => { 
+        if (tempYOffset > 0) {
+            let siId = setInterval(() => {
                 scrollTo(0, tempYOffset); //0.02초마다 5px씩 스크롤
-                tempYOffset += 5; 
+                tempYOffset += 5;
 
-                if (tempScrollCount > 20) { 
+                if (tempScrollCount > 20) {
                     clearInterval(siId); //20번 스크롤하면 setInterval을 멈춤
                 }
                 tempScrollCount++; //스크롤 횟수를 증가
@@ -555,32 +582,32 @@
             yOffset = window.scrollY;
             scrollLoop();
             checkMenu();
-    
-            if (!rafState) { 
+
+            if (!rafState) {
                 raf = requestAnimationFrame(loop); //requestAnimationFrame은 브라우저에게 수행하기를 원하는 애니메이션을 알리고 다음 리페인트가 진행되기 전에 해당 애니메이션을 업데이트하는 함수
                 rafState = true;
             }
         });
 
-        window.addEventListener('resize', () =>{
-            if(window.innerWidth > 900){ //모바일 화면이 아닐 때만 실행
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 900) { //모바일 화면이 아닐 때만 실행
                 window.location.reload(); //브라우저의 크기가 변할 때마다 새로고침
             }
-            
+
         });
 
         window.addEventListener('orientationchange', () => {
             scrollTo(0, 0); //모바일 기기의 방향이 바뀔 때마다 스크롤 위치를 0으로 설정
             setTimeout(setLayout, 500); //모바일 기기의 방향이 바뀔 때마다 실행
-        }); 
+        });
 
         document.querySelector('.loading').addEventListener('transitionend', (e) => {
             document.body.removeChild(e.currentTarget); //로딩이 끝나면 loading 클래스를 제거
         });
 
     });
-   
-    
+
+
 
     setcanvasImages();
 

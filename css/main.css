@@ -272,6 +272,24 @@ body.before-load{
     fill:transparent;
     animation: loading-ani 1s infinite;
 }
+.ribbon-path {
+	left: 50%;
+	top: 50%;
+	min-width: 850px;
+	transform: translate(-50%, -50%);
+}
+.ribbon-path path {
+	fill: none;
+	stroke: darkorange;
+	stroke-width: 62;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-dasharray: 1401, 1401;
+	stroke-dashoffset: 1401;
+}
+#scroll-section-1 .sticky-elem p{
+    color: white;
+}
 
 @media (min-width:1024px){
     #scroll-section-0 h1{
